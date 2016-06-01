@@ -34,6 +34,11 @@ plugin_key = refs.keys.select { |key| key.end_with?(plugin) }[0]
 plugin_ref = refs[plugin_key]
 platform = nil
 
+if plugin_ref.nil?
+  FastlaneCore::UI.error("Plugin #{plugin} not loaded, yet.")
+  exit(1)
+end
+
 plugin_ref[:actions].each do |action_name|
   action = Fastlane::ActionsList.find_action_named(action_name.to_s)
 
