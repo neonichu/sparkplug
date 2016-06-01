@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'sparkplug/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'sparkplug'
+  spec.name          = 'sparkplugg'
   spec.version       = Sparkplug::VERSION
   spec.authors       = ['Boris Bügling']
   spec.email         = ['boris@icculus.org']
