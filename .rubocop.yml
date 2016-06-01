@@ -1,0 +1,8 @@
+Metrics/LineLength:
+  Max: 125
+
+Style/Documentation:
+  Exclude:
+    - 'spec/**/*'
+    - 'test/**/*'
+    - 'lib/sparkplug/version.rb'

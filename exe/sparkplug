@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+
+require 'fastlane_core'
+require 'fastlane'
+require 'fastlane/documentation/actions_list'
+require 'terminal-table'
+
+if ARGV.length == 0
+  FastlaneCore::UI.error('Usage: sparkplug [plugin-name]')
+  exit(1)
+end
+
+plugin = ARGV[0]
+
+all_platforms = Fastlane::SupportedPlatforms.all
+used_fastlane_version = Fastlane::VERSION
+
+fastfile = "fastlane_version \"#{used_fastlane_version}\"\n"
+
+FileUtils.mkdir_p('fastlane')
+FileUtils.touch('fastlane/Fastfile')
+
+pm = Fastlane::PluginManager.new
+pm.add_dependency(plugin)
+
+# we need this for the beta only
+gemfile = File.read('Gemfile')
+gemfile = gemfile.gsub(/gem 'fastlane'/, "gem 'fastlane', '#{used_fastlane_version}'")
+File.open('Gemfile', 'w') { |file| file.puts gemfile }
+
+Fastlane::PluginManager.load_plugins
+refs = Fastlane::PluginManager.plugin_references
+plugin_key = refs.keys.select { |key| key.end_with?(plugin) }[0]
+plugin_ref = refs[plugin_key]
+platform = nil
+
+plugin_ref[:actions].each do |action_name|
+  action = Fastlane::ActionsList.find_action_named(action_name.to_s)
+
+  if platform.nil?
+    platform = all_platforms.select { |p| action.is_supported?(p) }[0]
+
+    fastfile << ''"
+default_platform :#{platform}
+
+platform :#{platform} do
+  lane :yolo do
+"''
+  end
+
+  fastfile << "    #{action_name}(\n"
+
+  action.available_options.each do |option|
+    default_value = option.default_value.nil? ? 'nil' : option.default_value
+    fastfile << "      #{option.key}: #{default_value},\n"
+  end
+
+  fastfile << "    )\n"
+end
+
+fastfile << "  end\nend\n"
+File.open('fastlane/Fastfile', 'w') { |file| file.write(fastfile) }
+
+FastlaneCore::UI.message('Run `bundle exec fastlane yolo` after the dependencies have been installed to run your action.')
+pm.install_dependencies!
