@@ -8,7 +8,7 @@ Quickly try out fastlane plugins.
 
 Install this using:
 
-    $ gem install sparkplugg
+    $ gem install sparkplug
 
 ## Usage
 
