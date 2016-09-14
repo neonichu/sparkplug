@@ -1,5 +1,7 @@
 # Sparkplug
 
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
 ![Sparkplug from Transformers](sparkplug.jpg)
 
 Quickly try out fastlane plugins.
